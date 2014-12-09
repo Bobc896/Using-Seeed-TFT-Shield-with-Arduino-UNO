@@ -1,0 +1,127 @@
+// Bounce  Displays a ball bouncing off the perimeter of the screen.
+// Works with UNO and a SEEED Studios TFT Touch Screen Ver. 2
+//  Written by R.M.Coe 11/29/14
+// 
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR ANY PARTICULAR PURPOSE. 
+//
+
+
+#include <TFTv2.h>
+#include <SPI.h>
+
+#ifdef UNO
+#define YP A2   // must be an analog pin, use "An" notation!
+#define XM A1   // must be an analog pin, use "An" notation!
+#define YM A0   // can be a digital pin, this is A0
+#define XP A3   // can be a digital pin, this is A3 
+#endif
+
+#ifdef SEEEDUINO
+#define YP A2   // must be an analog pin, use "An" notation!
+#define XM A1   // must be an analog pin, use "An" notation!
+#define YM 14   // can be a digital pin, this is A0
+#define XP 17   // can be a digital pin, this is A3 
+#endif
+
+#ifdef MEGA
+#define YP A2   // must be an analog pin, use "An" notation!
+#define XM A1   // must be an analog pin, use "An" notation!
+#define YM 54   // can be a digital pin, this is A0
+#define XP 57   // can be a digital pin, this is A3 
+#endif 
+
+int long Xpos = 0;
+int long Ypos = 0;
+int  Xclrlow = 0;
+int  Xclrhigh = 0;
+int  Yclrlow = 0;
+int  Yclrhigh = 0;
+int myWidth = 319;
+int myHeight = 239;
+int Xdir = 1;
+int Ydir = 1;
+int xpmove = 8;
+int xnmove = -8;
+int ypmove = 8;
+int ynmove = -8;
+
+
+void setup()
+{
+
+  Tft.TFTinit();  //init TFT library
+  randomSeed(millis());
+
+  Xpos = random(239);   // set a random starting position
+  Ypos = random(319);
+}
+
+void loop()
+{
+
+  // Tft.fillCircle(Xpos, Ypos, radius,color);  
+  Tft.fillCircle(Xpos, Ypos, 10,RED);
+  
+    // Keep ball within screen size
+  if (Xpos >= (myHeight-10)){  // set X move direction
+    Xdir = 0;
+  }
+  if (Xpos <= 10 ) {
+    Xdir = 1; 
+  }
+  
+  if (Xdir == 0) {        // move down
+    Xpos = Xpos + xnmove;
+  }
+  else {
+    Xpos = Xpos + xpmove;   // move up
+  } 
+
+  if (Ypos >= (myWidth-10)) {  // set Y move direction  
+    Ydir = 0;
+  }  
+  if (Ypos <= 10 ) {
+    Ydir = 1;  
+  } 
+  
+  if (Ydir == 0){
+    Ypos = Ypos + ynmove;  //  move left
+  }  
+  else { 
+    Ypos = Ypos + ypmove;   // move right   
+  }
+
+  
+// Keep the screen clean by erasing old ball position
+  Xclrlow = Xpos - 20;
+  if (Xclrlow <= 0){
+    Xclrlow = 0;
+  }   
+  Xclrhigh = Xpos + 20;
+  if (Xclrhigh >= myHeight){
+    Xclrhigh = myHeight;
+  }
+  Yclrlow = Ypos - 20;
+  if (Yclrlow <= 0){
+    Yclrlow = 0;
+  }  
+  Yclrhigh = Ypos + 20;
+  if (Yclrhigh >= myWidth){
+    Yclrhigh = myWidth;
+  }
+  
+  
+  delay(50);
+  Tft.fillScreen(Xclrlow,Xclrhigh,Yclrlow,Yclrhigh,BLACK);  // Clear ball image only
+
+
+
+
+
+}
+
+
+
+
